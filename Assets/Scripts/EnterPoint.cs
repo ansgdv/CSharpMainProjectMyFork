@@ -13,6 +13,7 @@ public class EnterPoint : MonoBehaviour
     private float _timeScale = 1;
 
     // Hello, I was here.
+    // I was here again
 
     void Start()
     {
