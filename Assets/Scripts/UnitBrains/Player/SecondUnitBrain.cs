@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
+using PlasticPipe.PlasticProtocol.Messages;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -13,6 +16,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _targetsNotInRange = new List<Vector2Int>(); 
+        
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -32,31 +37,32 @@ namespace UnitBrains.Player
                 AddProjectileToList(projectile, intoList);
             }
             IncreaseTemperature();
-
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int position = unit.Pos;
+
+            if (_targetsNotInRange.Any())
+            {
+                Vector2Int nextPosition = _targetsNotInRange[0];
+                position = position.CalcNextStepTowards(nextPosition);
+            }
+            return position;
         }
 
-        protected override List<Vector2Int> SelectTargets()
+        private List<Vector2Int> SelectNearestTargets(List<Vector2Int> targets)
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            
-            if (!result.Any())
+            if (!targets.Any())
             {
-                return result;
+                return targets;
             }
 
-            Vector2Int nearestTarget = result[0];
+            Vector2Int nearestTarget = targets[0];
             float minDistance = DistanceToOwnBase(nearestTarget);
 
-            foreach (var target in result)
+            foreach (var target in targets)
             {
                 float distance = DistanceToOwnBase(target);
                 if (distance < minDistance)
@@ -66,11 +72,41 @@ namespace UnitBrains.Player
                 }
             }
 
-            result[0] = nearestTarget;
+            targets.Clear();
+            targets.Add(nearestTarget);
 
-            while (result.Count > 1)
+            return targets;
+        }
+
+        protected override List<Vector2Int> SelectTargets()
+        {
+            ///////////////////////////////////////
+            // Homework 2.2 (2 block, 2 module)
+            ///////////////////////////////////////
+            List<Vector2Int> allTargets = new List<Vector2Int>();
+
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                allTargets.Add(target);
+            }
+
+            List<Vector2Int> result = new List<Vector2Int>();
+            
+            _targetsNotInRange.Clear();
+            if (allTargets.Any())
+            {
+                Vector2Int nearestTarget = SelectNearestTargets(allTargets)[0];
+                
+                if (IsTargetInRange(nearestTarget))
+                    result.Add(nearestTarget);
+                else
+                    _targetsNotInRange.Add(nearestTarget);
+            }
+            else
+            {
+                int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                Vector2Int enemyBasePos = runtimeModel.RoMap.Bases[enemyId];
+                result.Add(enemyBasePos);
             }
 
             return result;
