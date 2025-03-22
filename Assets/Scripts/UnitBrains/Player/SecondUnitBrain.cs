@@ -32,17 +32,17 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
         }
 
-        public override Vector2Int GetNextStep()
-        {
-            Vector2Int position = unit.Pos;
+        //public override Vector2Int GetNextStep()
+        //{
+        //    Vector2Int position = unit.Pos;
 
-            if (_targetsNotInRange.Any())
-            {
-                Vector2Int nextPosition = _targetsNotInRange[0];
-                position = position.CalcNextStepTowards(nextPosition);
-            }
-            return position;
-        }
+        //    if (_targetsNotInRange.Any())
+        //    {
+        //        Vector2Int nextPosition = _targetsNotInRange[0];
+        //        position = position.CalcNextStepTowards(nextPosition);
+        //    }
+        //    return position;
+        //}
 
         private int CalcTargetId(int allTargetsCount)
         {
