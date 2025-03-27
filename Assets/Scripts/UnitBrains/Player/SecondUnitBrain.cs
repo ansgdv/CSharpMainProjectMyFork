@@ -51,34 +51,34 @@ namespace UnitBrains.Player
             return _unitId % targetsCount == 0 ? targetsCount : _unitId % targetsCount; ;
         }
 
-        protected override List<Vector2Int> SelectTargets()
-        {
-            List<Vector2Int> allTargets = new List<Vector2Int>();
+        //protected override List<Vector2Int> SelectTargets()
+        //{
+        //    List<Vector2Int> allTargets = new List<Vector2Int>();
 
-            foreach (var target in GetAllTargets())
-            {
-                allTargets.Add(target);
-            }
+        //    foreach (var target in GetAllTargets())
+        //    {
+        //        allTargets.Add(target);
+        //    }
 
-            if (!allTargets.Any())
-            {
-                int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
-                Vector2Int enemyBasePos = runtimeModel.RoMap.Bases[enemyId];
-                allTargets.Add(enemyBasePos);
-            }
+        //    if (!allTargets.Any())
+        //    {
+        //        int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+        //        Vector2Int enemyBasePos = runtimeModel.RoMap.Bases[enemyId];
+        //        allTargets.Add(enemyBasePos);
+        //    }
 
-            SortByDistanceToOwnBase(allTargets);
-            Vector2Int targetForAttack = allTargets[CalcTargetId(allTargets.Count) - 1];
+        //    SortByDistanceToOwnBase(allTargets);
+        //    Vector2Int targetForAttack = allTargets[CalcTargetId(allTargets.Count) - 1];
 
-            List<Vector2Int> result = new List<Vector2Int>();
+        //    List<Vector2Int> result = new List<Vector2Int>();
 
-            _targetsNotInRange.Clear();
-            if (IsTargetInRange(targetForAttack))
-                result.Add(targetForAttack);
-            else
-                _targetsNotInRange.Add(targetForAttack);
-            return result;
-        }
+        //    _targetsNotInRange.Clear();
+        //    if (IsTargetInRange(targetForAttack))
+        //        result.Add(targetForAttack);
+        //    else
+        //        _targetsNotInRange.Add(targetForAttack);
+        //    return result;
+        //}
 
         public override void Update(float deltaTime, float time)
         {
